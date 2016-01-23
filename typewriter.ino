@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <Arduino.h>
 
 const int SLIDE_DIR_PIN = 11;
 const int SLIDE_STEP_PIN = 10;
@@ -9,7 +10,7 @@ const int WHACK_PIN = 7;
 const int LF_MOTOR_PIN = 5;
 const int LF_SENSE_PIN = 4;
 
-const int WHACK_TIME = 100;
+const int WHACK_TIME = 50;
 
 class Stepper {
 public:
@@ -25,7 +26,7 @@ public:
     digitalWrite(m_step_pin, LOW);
   }
   
-  void step(int steps, int delay_time = 200) {
+  void step(int steps, int delay_time = 10) {
     if (steps < 0) {
       digitalWrite(m_dir_pin, LOW);
       steps = -1 * steps;
@@ -53,6 +54,8 @@ Stepper slide(SLIDE_DIR_PIN, SLIDE_STEP_PIN);
 // the setup routine runs once when you press reset:
 void setup() {
 	// initialize the digital pin as an output.
+	wheel.init();
+	slide.init();
 	pinMode(13, OUTPUT);
 	pinMode(ERASE_PIN, OUTPUT);
 	pinMode(WHACK_PIN, OUTPUT);
@@ -119,21 +122,14 @@ void serialControl() {
 
 // the loop routine runs over and over again forever:
 void testall() {
-  /*
 	digitalWrite(13, HIGH);
-	step(-5);
+	wheel.step(-5, 4);
 
 	whack();
 	digitalWrite(13, LOW);
-	step(5);
+	wheel.step(5, 4);
 	whack();
-	linefeed();
-	
-	delay(1000);
-	digitalWrite(13, HIGH);
-	delay(1000);
-	digitalWrite(13, LOW);
-	*/
+	delay(50);
 }
 
 void loop() {
