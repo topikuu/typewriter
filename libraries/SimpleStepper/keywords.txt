@@ -1,0 +1,3 @@
+SimpleStepper	KEYWORD1
+init			KEYWORD2
+step			KEYWORD2
