@@ -1,4 +1,4 @@
-update=17.4.2016 16.30.39
+update=Thu 21 Apr 2016 21:54:44 EEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,13 +23,11 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
-[general]
-version=1
 [eeschema]
 version=1
 LibDir=
 [eeschema/libraries]
-LibName1=typewriter-rescue
+LibName1=typewriter-parts
 LibName2=power
 LibName3=device
 LibName4=transistors
@@ -59,4 +57,5 @@ LibName27=opto
 LibName28=atmel
 LibName29=contrib
 LibName30=valves
-LibName31=typewriter-parts
+[general]
+version=1
