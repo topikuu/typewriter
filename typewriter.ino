@@ -7,15 +7,15 @@
 // Pin Declarations ------------------------------------------------------------
 const int DEBUG_LED_PIN = 13;
 
-const int SLIDE_DIR_PIN = 12;
-const int SLIDE_STEP_PIN = 11;
-const int SLIDE_SENSE_PIN = 10;
-const int WHEEL_DIR_PIN = 9;
-const int WHEEL_STEP_PIN = 8;
-const int ERASE_PIN = 7;
-const int WHACK_PIN = 6;
-const int LF_MOTOR_PIN = 5;
-const int LF_SENSE_PIN = 4;
+const int SLIDE_DIR_PIN = 7;
+const int SLIDE_STEP_PIN = 8;
+const int SLIDE_SENSE_PIN = 3;
+const int WHEEL_DIR_PIN = 16;
+const int WHEEL_STEP_PIN = 17;
+const int ERASE_PIN = 15;
+const int WHACK_PIN = 14;
+const int LF_MOTOR_PIN = 6;
+const int LF_SENSE_PIN = 2;
 
 // Magic numbers ---------------------------------------------------------------
 const unsigned int WHACK_TIME_US = 1500;
