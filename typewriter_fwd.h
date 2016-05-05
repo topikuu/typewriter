@@ -12,3 +12,4 @@ struct SerialCommand;
 struct CommandData;
 
 void lcd_debug_command(SerialCommand& cmd, CommandData& data);
+void lcd_debug(const char*, int = -1);

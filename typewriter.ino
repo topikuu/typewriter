@@ -77,15 +77,27 @@ CommandData command_data[] = {
 SerialCommand parseCommand(uint8_t input) {
     uint8_t opcode = (0xF0 & input) >> 4;
     uint8_t data = (0x0F & input);
+    #ifdef DEBUG
+        lcd.setCursor(0, 0);
+        lcd.print(input);
+        lcd.print(" ");
+        lcd.print(opcode);
+        lcd.print(" ");
+        lcd.print(data);
+        lcd.print("    ");
+        delay(5000);
+    #endif
     return {opcode, data};
 }
 
 void execute(SerialCommand cmd) {
     CommandData data = command_data[cmd.opcode];
-    
+
+    /*
     #ifdef DEBUG
         lcd_debug_command(cmd, data);
     #endif
+    */
     
     if (data.has_data_arg) {
         OpWithData op = (OpWithData)data.address;
@@ -158,12 +170,18 @@ void notImplemented() {
 
 #ifdef DEBUG
 void lcd_debug_command(SerialCommand& cmd, CommandData& data) {
+    //lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print(data.name);
     if (data.has_data_arg) {
         lcd.print(" ");
         lcd.print(cmd.data);
     }
+    lcd.print("          ");
+}
+
+void lcd_debug(const char* command, int data) {
+  
 }
 #endif
 
