@@ -62,18 +62,6 @@ struct CommandData {
     bool has_data_arg;
 };
 
-CommandData command_data[] = {
-    { "WHACK",      (void*)&whack,                  false },    // 0x00: Whack
-    { "LF",         (void*)&linefeed,               false },    // 0x01: Linefeed
-    { "WHEEL CW",   (void*)&wheelClockwise,         true },     // 0x02: Wheel clockwise
-    { "WHEEL CCW",  (void*)&wheelCounterclockwise,  true },     // 0x03: Wheel counterclockwise
-    { "CORR UP",    (void*)&notImplemented,         false },    // 0x04: Correction up
-    { "CORR DN",    (void*)&notImplemented,         false },    // 0x05: Correction down
-    { "SLIDE L",    (void*)&slideLeft,              true },     // 0x06: Slide left
-    { "SLIDE R",    (void*)&slideRight,             true },     // 0x07: Slide right
-    { "CARR RET",   (void*)&notImplemented,         false },    // 0x08: Carriage return
-};
-
 SerialCommand parseCommand(uint8_t input) {
     uint8_t opcode = (0xF0 & input) >> 4;
     uint8_t data = (0x0F & input);
@@ -88,24 +76,6 @@ SerialCommand parseCommand(uint8_t input) {
         delay(5000);
     #endif
     return {opcode, data};
-}
-
-void execute(SerialCommand cmd) {
-    CommandData data = command_data[cmd.opcode];
-
-    /*
-    #ifdef DEBUG
-        lcd_debug_command(cmd, data);
-    #endif
-    */
-    
-    if (data.has_data_arg) {
-        OpWithData op = (OpWithData)data.address;
-        op(cmd.data);
-    } else {
-        OpNoData op = (OpNoData)data.address;
-        op();
-    }
 }
 
 // This is where the magic happens ---------------------------------------------
@@ -201,7 +171,38 @@ void serialControl() {
     {
         uint8_t input = Serial.read();
 
-        execute(parseCommand(input));
+        SerialCommand command = parseCommand(input);
+        switch(command.opcode) {
+            case 0x00:
+                whack();
+                break;
+            case 0x01:
+                linefeed();
+                break;
+            case 0x02:
+                wheelClockwise(command.data);
+                break;
+            case 0x03:
+                wheelCounterclockwise(command.data);
+                break;
+            case 0x04: // Corr up
+                notImplemented();
+                break;
+            case 0x05: // Corr dn
+                notImplemented();
+                break;
+            case 0x06:
+                slideLeft(command.data);
+                break;
+            case 0x07:
+                slideRight(command.data);
+                break;
+            case 0x08: // Carr ret
+                notImplemented();
+                break;
+            default:
+                notImplemented();
+        }
         #ifdef DEBUG
             last_cmd = millis();
         #endif
