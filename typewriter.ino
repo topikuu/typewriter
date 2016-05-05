@@ -71,6 +71,7 @@ CommandData command_data[] = {
     { "CORR DN",    (void*)&notImplemented,         false },    // 0x05: Correction down
     { "SLIDE L",    (void*)&slideLeft,              true },     // 0x06: Slide left
     { "SLIDE R",    (void*)&slideRight,             true },     // 0x07: Slide right
+    { "CARR RET",   (void*)&notImplemented,         false },    // 0x08: Carriage return
 };
 
 SerialCommand parseCommand(uint8_t input) {
