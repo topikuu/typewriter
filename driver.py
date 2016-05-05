@@ -64,7 +64,7 @@ def typeChar(c):
 typeChar.state = 0
 
 def typeSpace():
-	slide(1)
+    slide(1)
 
 def handleChar(c):
     if c in charset:
@@ -85,7 +85,7 @@ def parseArgs():
 def main():
     args = parseArgs()
     ser = serial.Serial(args.device, 115200)
-    time.sleep(5)
+    time.sleep(2)
     f = open(args.file)
     while True:
         char = f.read(1)
@@ -95,8 +95,9 @@ def main():
             break
     f.close()
 
+    print("Start")
     while len(command_buffer):
-        read_byte = ser.read()
+        read_byte = ser.read()[0]
         assert read_byte == 0xAA, "ARDUINO IS BORK'D"
         ser.write(command_buffer.pop())
 
