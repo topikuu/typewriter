@@ -2,15 +2,6 @@
 import argparse
 import serial, time
 
-serial = serial.Serial("/dev/ttyUSB0", 115200)
-time.sleep(3)
-command = 0x02 #Wheel CW
-data = 0x0A
-byte = ((command << 4) | data).to_bytes(1, byteorder="big")
-serial.write(byte)
-time.sleep(2)
-serial.close()
-
 charset = ['_', '.', 'w', ')', 'ö', 'k', '^', 'I', 'L', 'ü', '²', 'D', 'F', '?', 'M', '!', 'ä', 'T', 'R', '*', 'K', 'O', 'Ä', 'Ü', '9', '8', '3', '1', '&', '7', 'X', '6', '=', '5', '2', '4', '%', '`', 'Ö', 'Å', '\'', 'μ', '³', '|', 'q', 'å', '°', 'Q', '$', 'Y', 'x', 'W', '/', '£', '§', 'N', 'Z', '0', 'H', '+', 'E', '(', 'U', 'J', 'ß', 'y', 'B', 'P', 'A', 'C', ':', 'S', 'v', 'z', 'p', 'j', 'm', 'V', 'u', 'G', 'l', 'f', 'd', 'o', 'n', '´', 'i', 'g', 'e', 't', 'r', 's', 'a', '"', 'b', 'h', 'c', ';', '-', ',']
 
 def sendCommand(command, data = 0):
@@ -26,7 +17,7 @@ def sendCommand(command, data = 0):
         "carr_ret": 0x08
     }
     byte = (((commandDict[command] << 4) & 0xF0) | (data & 0x0F)).to_bytes(1, byteorder="big")
-    serial.write(byte)
+    sendCommand.serial.write(byte)
 sendCommand.serial = None
 
 def whack():
@@ -70,12 +61,15 @@ def typeChar(c):
     typeChar.state = index
 typeChar.state = 0
 
+def typeSpace():
+	slide(1)
+
 def handleChar(c):
     if c in charset:
         typeChar(c)
-    else if c == '\n':
+    elif c == '\n':
         lineFeed()
-    else if c == ' ':
+    elif c == ' ':
         typeSpace()
 
 def parseArgs():
@@ -89,14 +83,16 @@ def parseArgs():
 def main():
     args = parseArgs()
     sendCommand.serial = serial.Serial(args.device, 115200)
+    time.sleep(5)
     f = open(args.file)
     while True:
         char = f.read(1)
         if char: # Not EOF
-            handleChar(c)
+            handleChar(char)
         else:
             break
     f.close()
+    sendCommand.serial.close()
 
 if __name__ == '__main__':
     main()
