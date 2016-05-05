@@ -173,6 +173,12 @@ void serialControl() {
         static unsigned long last_cmd = 0;
         static const char* idle[] = { ".", "o", "O", "o" };
     #endif
+    static bool requested_flag = false;
+    if (Serial.available() == 0 && !requested_flag)
+    {
+        Serial.write(0xAA);
+        requested_flag = true;
+    }
     if (Serial.available() > 0)
     {
         uint8_t input = Serial.read();
@@ -181,6 +187,7 @@ void serialControl() {
         #ifdef DEBUG
             last_cmd = millis();
         #endif
+        requested_flag = false;
     }
     #ifdef DEBUG
         else if (millis() > last_cmd + DEBUG_DISPLAY_DELAY_MS) {

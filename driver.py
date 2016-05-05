@@ -2,9 +2,12 @@
 import argparse
 import serial, time
 
+command_buffer = []
+
 charset = ['_', '.', 'w', ')', 'ö', 'k', '^', 'I', 'L', 'ü', '²', 'D', 'F', '?', 'M', '!', 'ä', 'T', 'R', '*', 'K', 'O', 'Ä', 'Ü', '9', '8', '3', '1', '&', '7', 'X', '6', '=', '5', '2', '4', '%', '`', 'Ö', 'Å', '\'', 'μ', '³', '|', 'q', 'å', '°', 'Q', '$', 'Y', 'x', 'W', '/', '£', '§', 'N', 'Z', '0', 'H', '+', 'E', '(', 'U', 'J', 'ß', 'y', 'B', 'P', 'A', 'C', ':', 'S', 'v', 'z', 'p', 'j', 'm', 'V', 'u', 'G', 'l', 'f', 'd', 'o', 'n', '´', 'i', 'g', 'e', 't', 'r', 's', 'a', '"', 'b', 'h', 'c', ';', '-', ',']
 
-def sendCommand(command, data = 0):
+
+def queueCommand(command, data = 0):
     commandDict = {
         "whack": 0x00,
         "lf": 0x01,
@@ -17,11 +20,10 @@ def sendCommand(command, data = 0):
         "carr_ret": 0x08
     }
     byte = (((commandDict[command] << 4) & 0xF0) | (data & 0x0F)).to_bytes(1, byteorder="big")
-    sendCommand.serial.write(byte)
-sendCommand.serial = None
+    command_buffer.append(byte)
 
 def whack():
-    sendCommand("whack")
+    queueCommand("whack")
 
 def slide(count):
     if count == 0:
@@ -34,9 +36,9 @@ def slide(count):
 
     count = abs(count)
     while count > 0x0F:
-        sendCommand(command, 0x0F)
+        queueCommand(command, 0x0F)
         count -= 0x0F
-    sendCommand(command, count)
+    queueCommand(command, count)
 
 def rotateWheel(rotation):
     if rotation == 0:
@@ -49,9 +51,9 @@ def rotateWheel(rotation):
     
     rotation = abs(rotation)
     while rotation > 0x0F:
-        sendCommand(command, 0x0F)
+        queueCommand(command, 0x0F)
         rotation -= 0x0F
-    sendCommand(command, rotation)
+    queueCommand(command, rotation)
 
 def typeChar(c):
     index = charset.index(c)
@@ -82,7 +84,7 @@ def parseArgs():
 
 def main():
     args = parseArgs()
-    sendCommand.serial = serial.Serial(args.device, 115200)
+    ser = serial.Serial(args.device, 115200)
     time.sleep(5)
     f = open(args.file)
     while True:
@@ -92,7 +94,13 @@ def main():
         else:
             break
     f.close()
-    sendCommand.serial.close()
+
+    while len(command_buffer):
+        read_byte = ser.read()
+        assert read_byte == 0xAA, "ARDUINO IS BORK'D"
+        ser.write(command_buffer.pop())
+
+    ser.close()
 
 if __name__ == '__main__':
     main()
